@@ -35,11 +35,11 @@ export default function Home() {
           </h1>
           <div className="text-lg text-gray-600 max-w-2xl mx-auto">
             {session.data ? (
-              <p className="mt-4 text-green-600">
-                Welcome back, {session.data.user.name || "User"}!
+              <p className="mt-4 text-gray-600">
+                Welcome back, {session?.data?.user?.name ?? "User"}!
               </p>
             ) : (
-              <p className="mt-4 text-red-600">You are not signed in.</p>
+              <p className="mt-4 text-red-950-600">You are not signed in.</p>
             )}
           </div>
         </div>
