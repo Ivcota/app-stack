@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/dist/client/components/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignIn() {
+  const router = useRouter();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -18,8 +19,6 @@ export default function SignIn() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
