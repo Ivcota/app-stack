@@ -1,4 +1,4 @@
-import { Home, Settings, User } from "lucide-react";
+import { Home, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -58,14 +58,6 @@ export default async function AppLayout({
                       <Link href="/app/dashboard">
                         <Home className="size-4" />
                         <span>Dashboard</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/app/profile">
-                        <User className="size-4" />
-                        <span>Profile</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
