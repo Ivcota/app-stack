@@ -69,14 +69,6 @@ export default async function AppLayout({
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/app/settings">
-                        <Settings className="size-4" />
-                        <span>Settings</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -84,6 +76,14 @@ export default async function AppLayout({
 
           <SidebarFooter>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/app/settings">
+                    <Settings className="size-4" />
+                    <span>Settings</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SignOutButton />
               </SidebarMenuItem>
