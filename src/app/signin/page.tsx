@@ -29,7 +29,7 @@ export default function SignIn() {
           password: password,
         });
         if (result.error) setError(result.error.message ?? "Failed to sign in");
-        if (result.data) router.push("/");
+        if (result.data) router.push("/app/dashboard");
       } catch {
         setError("Invalid email or password");
       } finally {

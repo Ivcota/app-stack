@@ -41,7 +41,7 @@ export default function SignUp() {
         if (result.error)
           setError(result.error.message ?? "Failed to create account");
 
-        if (result.data) router.push("/");
+        if (result.data) router.push("/app/dashboard");
       } catch {
         setError("Failed to create account. Please try again.");
       } finally {
