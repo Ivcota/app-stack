@@ -50,7 +50,7 @@ export default function Dashboard() {
               </p>
               <p className="text-sm">
                 <span className="font-medium">Name:</span>{" "}
-                {session.data?.user?.name || "Not set"}
+                {session.data?.user?.name ?? "Not set"}
               </p>
             </div>
           </CardContent>

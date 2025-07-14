@@ -16,12 +16,23 @@ import {
 
 import Link from "next/link";
 import { SignOutButton } from "@/components/sign-out-button";
+import { authClient } from "@/lib/auth-client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await authClient.getSession({
+    fetchOptions: {
+      headers: await headers(),
+    },
+  });
+
+  if (!session.data?.user) redirect("/signin");
+
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
