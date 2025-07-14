@@ -9,50 +9,53 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
       confirmPassword: "",
     },
-  });
+    onSubmit: async (values) => {
+      const {
+        value: { email, password, confirmPassword },
+      } = values;
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+      setIsLoading(true);
+      setError("");
+
+      if (password !== confirmPassword) {
+        setError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const result = await authClient.signUp.email({
+          email: email,
+          password: password,
+          name: email.split("@")[0],
+        });
+
+        if (result.error)
+          setError(result.error.message ?? "Failed to create account");
+
+        if (result.data) router.push("/");
+      } catch {
+        setError("Failed to create account. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    const emailValue = form.getFieldValue("email");
-    const passwordValue = form.getFieldValue("password");
-    const confirmPasswordValue = form.getFieldValue("confirmPassword");
-
-    if (passwordValue !== confirmPasswordValue) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const result = await authClient.signUp.email({
-        email: emailValue,
-        password: passwordValue,
-        name: emailValue.split("@")[0],
-      });
-
-      if (result.error)
-        setError(result.error.message ?? "Failed to create account");
-
-      if (result.data) router.push("/");
-    } catch {
-      setError("Failed to create account. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    e.stopPropagation();
+    form.handleSubmit();
   };
 
   return (

@@ -3,10 +3,12 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { useSession } = authClient;
+  const { useSession, signOut } = authClient;
   const session = useSession();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,12 +19,29 @@ export default function Home() {
               <h1 className="text-xl font-semibold">App Starter</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="link" asChild>
-                <Link href="/signin">Sign In</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
+              {!session.data ? (
+                <>
+                  <Button variant="link" asChild>
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    signOut({
+                      fetchOptions: {
+                        onSuccess: () => router.push("/"),
+                      },
+                    })
+                  }
+                >
+                  Sign Out
+                </Button>
+              )}
             </div>
           </div>
         </div>

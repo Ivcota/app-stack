@@ -15,6 +15,27 @@ export default function SignIn() {
       email: "",
       password: "",
     },
+    onSubmit: async (values) => {
+      const {
+        value: { email, password },
+      } = values;
+
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const result = await authClient.signIn.email({
+          email: email,
+          password: password,
+        });
+        if (result.error) setError(result.error.message ?? "Failed to sign in");
+        if (result.data) router.push("/");
+      } catch {
+        setError("Invalid email or password");
+      } finally {
+        setIsLoading(false);
+      }
+    },
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -22,24 +43,8 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    const emailValue = form.getFieldValue("email");
-    const passwordValue = form.getFieldValue("password");
-
-    try {
-      const result = await authClient.signIn.email({
-        email: emailValue,
-        password: passwordValue,
-      });
-      if (result.error) setError(result.error.message ?? "Failed to sign in");
-      if (result.data) router.push("/");
-    } catch {
-      setError("Invalid email or password");
-    } finally {
-      setIsLoading(false);
-    }
+    e.stopPropagation();
+    form.handleSubmit();
   };
 
   return (
