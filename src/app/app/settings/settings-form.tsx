@@ -2,105 +2,78 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
+import { updateUserSettingsAction } from "@/app/actions/user-actions";
+import { useActionState } from "react";
 
-export default function SettingsForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const form = useForm({
-    defaultValues: {
-      username: "",
-      email: "",
-    },
-    onSubmit: async (values) => {
-      const {
-        value: { username, email },
-      } = values;
-
-      setIsLoading(true);
-      setError("");
-      setSuccess("");
-
-      try {
-        console.log("Form submitted:", { username, email });
-        setSuccess("Settings updated successfully!");
-      } catch {
-        setError("Failed to update settings. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    form.handleSubmit();
+type SettingsFormProps = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
   };
+};
+
+export default function SettingsForm({ user }: SettingsFormProps) {
+  const { id, name, email } = user;
+  const [state, formAction, isPending] = useActionState(
+    updateUserSettingsAction,
+    {
+      error: undefined,
+      success: undefined,
+    }
+  );
 
   return (
     <div className="max-w-2xl">
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" action={formAction}>
         <div className="space-y-4">
-          <form.Field
-            name="username"
-            children={(field) => {
-              return (
-                <div>
-                  <label
-                    htmlFor="username"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Username
-                  </label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="Enter your username"
-                  />
-                </div>
-              );
-            }}
-          />
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Name
+            </label>
+            <input hidden name="id" defaultValue={id} />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              defaultValue={name}
+              placeholder="Enter your name"
+            />
+          </div>
 
-          <form.Field
-            name="email"
-            children={(field) => {
-              return (
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email Address
-                  </label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="email"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="Enter your email address"
-                  />
-                </div>
-              );
-            }}
-          />
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Email Address
+            </label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              defaultValue={email}
+              placeholder="Enter your email address"
+            />
+          </div>
         </div>
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {state.error && (
+          <div className="text-red-600 text-sm">{state.error}</div>
+        )}
 
-        {success && <div className="text-green-600 text-sm">{success}</div>}
+        {state.success && (
+          <div className="text-green-600 text-sm">
+            User settings updated successfully!
+          </div>
+        )}
 
         <div>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Settings"}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Saving..." : "Save Settings"}
           </Button>
         </div>
       </form>
