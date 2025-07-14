@@ -75,7 +75,7 @@ export default function Home() {
                     Welcome back, {session?.data?.user?.name ?? "User"}!
                   </p>
                   <Button size="lg" className="h-11 px-8" asChild>
-                    <Link href="/app/dashboard">Go to Dashboard</Link>
+                    <Link href="/dashboard">Go to Dashboard</Link>
                   </Button>
                 </div>
               )}

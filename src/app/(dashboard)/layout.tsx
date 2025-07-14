@@ -55,7 +55,7 @@ export default async function AppLayout({
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link href="/app/dashboard">
+                      <Link href="/dashboard">
                         <Home className="size-4" />
                         <span>Dashboard</span>
                       </Link>
@@ -70,7 +70,7 @@ export default async function AppLayout({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/app/settings">
+                  <Link href="/settings">
                     <Settings className="size-4" />
                     <span>Settings</span>
                   </Link>

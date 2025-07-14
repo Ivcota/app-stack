@@ -8,38 +8,49 @@ import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function SignIn() {
-  const router = useRouter();
+export default function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
     onSubmit: async (values) => {
       const {
-        value: { email, password },
+        value: { email, password, confirmPassword },
       } = values;
 
       setIsLoading(true);
       setError("");
 
+      if (password !== confirmPassword) {
+        setError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const result = await authClient.signIn.email({
+        const result = await authClient.signUp.email({
           email: email,
           password: password,
+          name: email.split("@")[0],
         });
-        if (result.error) setError(result.error.message ?? "Failed to sign in");
-        if (result.data) router.push("/app/dashboard");
+
+        if (result.error)
+          setError(result.error.message ?? "Failed to create account");
+
+        if (result.data) router.push("/dashboard");
       } catch {
-        setError("Invalid email or password");
+        setError("Failed to create account. Please try again.");
       } finally {
         setIsLoading(false);
       }
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +63,7 @@ export default function SignIn() {
       <div className="max-w-md w-full space-y-8 p-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Create your account
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -76,7 +87,6 @@ export default function SignIn() {
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder="Enter your email"
-                      className="mt-1"
                     />
                   </div>
                 );
@@ -107,6 +117,31 @@ export default function SignIn() {
                 );
               }}
             />
+            <form.Field
+              name="confirmPassword"
+              children={(field) => {
+                return (
+                  <div>
+                    <label
+                      htmlFor="confirmPassword"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Confirm Password
+                    </label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="password"
+                      required
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Confirm your password"
+                      className="mt-1"
+                    />
+                  </div>
+                );
+              }}
+            />
           </div>
 
           {error && (
@@ -114,19 +149,19 @@ export default function SignIn() {
           )}
 
           <div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? "Creating account..." : "Sign up"}
             </Button>
           </div>
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/signup"
+                href="/signin"
                 className="font-medium text-gray-600 hover:text-gray-500"
               >
-                Sign up
+                Sign in
               </Link>
             </span>
           </div>
