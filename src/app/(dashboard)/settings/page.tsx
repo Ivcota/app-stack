@@ -5,8 +5,8 @@ import { getUser } from "@/app/services/user-services";
 import { headers } from "next/headers";
 
 const SettingsPage = async () => {
-  const args = await headers();
-  const user = await appRuntime.runPromise(getUser(args));
+  const requestHeaders = await headers();
+  const user = await appRuntime.runPromise(getUser(requestHeaders));
 
   if (user.error) {
     return (

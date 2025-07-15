@@ -2,7 +2,7 @@ import { Data, Effect } from "effect";
 
 import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 import { Result } from "@/lib/types";
-import { authClient } from "@/lib/auth-client";
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { user } from "@/db/schema";
@@ -18,22 +18,19 @@ class UserNotFoundError extends Data.TaggedError("UserNotFoundError")<{
 export const getUser = (headers: ReadonlyHeaders) =>
   Effect.gen(function* () {
     const userSession = yield* Effect.tryPromise({
-      try: () =>
-        authClient.getSession({
-          fetchOptions: { headers },
-        }),
+      try: () => auth.api.getSession({ headers }),
       catch: (error) => {
         return new UserSessionError({ cause: error });
       },
     });
 
-    if (!userSession.data?.user) {
+    if (!userSession?.user) {
       throw new UserSessionError({
         cause: new Error("User session not found"),
       });
     }
-    const result: Result<typeof userSession.data.user> = {
-      data: userSession.data.user,
+    const result: Result<typeof userSession.user> = {
+      data: userSession.user,
     };
     return result;
   }).pipe(
