@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
+import { useSignUp } from "@/hooks/useAuth";
 import { useState } from "react";
 
 export default function SignUp() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const signUpMutation = useSignUp();
+  const [passwordError, setPasswordError] = useState("");
+  
   const form = useForm({
     defaultValues: {
       email: "",
@@ -22,35 +22,16 @@ export default function SignUp() {
         value: { email, password, confirmPassword },
       } = values;
 
-      setIsLoading(true);
-      setError("");
+      setPasswordError("");
 
       if (password !== confirmPassword) {
-        setError("Passwords do not match");
-        setIsLoading(false);
+        setPasswordError("Passwords do not match");
         return;
       }
 
-      try {
-        const result = await authClient.signUp.email({
-          email: email,
-          password: password,
-          name: email.split("@")[0],
-        });
-
-        if (result.error)
-          setError(result.error.message ?? "Failed to create account");
-
-        if (result.data) router.push("/dashboard");
-      } catch {
-        setError("Failed to create account. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+      signUpMutation.mutate({ email, password });
     },
   });
-
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,13 +125,15 @@ export default function SignUp() {
             />
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+          {(signUpMutation.error || passwordError) && (
+            <div className="text-red-600 text-sm text-center">
+              {passwordError || signUpMutation.error?.message}
+            </div>
           )}
 
           <div>
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? "Creating account..." : "Sign up"}
+            <Button type="submit" disabled={signUpMutation.isPending} className="w-full">
+              {signUpMutation.isPending ? "Creating account..." : "Sign up"}
             </Button>
           </div>
 

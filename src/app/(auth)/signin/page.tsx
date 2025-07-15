@@ -3,13 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useSignIn } from "@/hooks/useAuth";
 
 export default function SignIn() {
-  const router = useRouter();
+  const signInMutation = useSignIn();
+  
   const form = useForm({
     defaultValues: {
       email: "",
@@ -20,26 +19,9 @@ export default function SignIn() {
         value: { email, password },
       } = values;
 
-      setIsLoading(true);
-      setError("");
-
-      try {
-        const result = await authClient.signIn.email({
-          email: email,
-          password: password,
-        });
-        if (result.error) setError(result.error.message ?? "Failed to sign in");
-        if (result.data) router.push("/dashboard");
-      } catch {
-        setError("Invalid email or password");
-      } finally {
-        setIsLoading(false);
-      }
+      signInMutation.mutate({ email, password });
     },
   });
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,13 +91,15 @@ export default function SignIn() {
             />
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+          {signInMutation.error && (
+            <div className="text-red-600 text-sm text-center">
+              {signInMutation.error.message}
+            </div>
           )}
 
           <div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+            <Button type="submit" className="w-full" disabled={signInMutation.isPending}>
+              {signInMutation.isPending ? "Signing in..." : "Sign in"}
             </Button>
           </div>
 
