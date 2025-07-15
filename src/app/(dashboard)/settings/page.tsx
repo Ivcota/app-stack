@@ -1,7 +1,7 @@
 import React from "react";
 import SettingsForm from "./settings-form";
 import { appRuntime } from "@/runtime";
-import { getUser } from "@/app/services/user-services";
+import { getUser } from "@/lib/services/user-services";
 import { headers } from "next/headers";
 
 const SettingsPage = async () => {

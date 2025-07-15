@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateUserSettingsAction } from "@/app/actions/user-actions";
+import { updateUserSettingsAction } from "@/lib/actions/user-actions";
 import { useActionState } from "react";
 
 type SettingsFormProps = {

@@ -2,7 +2,7 @@
 
 import { appRuntime } from "@/runtime";
 import { revalidatePath } from "next/cache";
-import { updateUserSettings } from "@/app/services/user-services";
+import { updateUserSettings } from "@/lib/services/user-services";
 
 export interface UpdateUserSettingsState {
   success?: string;
